@@ -11,6 +11,14 @@
                     <field name="xx_warranty_period"/>
                     <field name="xx_insurance_method"/>
                 </field>
+                 <field name="amount_tax" position="after">
+                 <!--
+                   <field name="xx_insurance_price"/>
+               -->
+                    <field  name="xx_insurance_percentages" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
+                    <field name="xx_insurance_costs" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
+             
+                </field>
                 
                 <xpath expr="//form//field[@name='client_order_ref']" position="after">
                     <field name="xx_payment_method"/>
@@ -19,16 +27,25 @@
         </record>
         
        
-        
-        
+    <!--
+        <record id="view_insurance_methods_form" model="ir.ui.view">
+            <field name="model">xx.insurance.price</field>
+            <field name="arch" type="xml">
+               
+                    <field  name="xx_insurance_percentage" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
+                    <field name="xx_insurance_cost" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
+                 
              
+            </field>
+        </record>
+             -->
         <record id="view_insurance_methods_form" model="ir.ui.view">
             <field name="model">xx.insurance.method</field>
             <field name="arch" type="xml">
                 <tree string="Insurance Methods" editable="bottom">
                     <field name="xx_insurance_name"/>
                     <field name="xx_insurance_percentage"/>
-                    
+                 
                 </tree>
             </field>
         </record>

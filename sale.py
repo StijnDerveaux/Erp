@@ -29,23 +29,32 @@ class SaleOrder(osv.Model):
             res[order.id] = {
                 'amount_untaxed': 0.0,
                 'amount_tax': 0.0,
-               
                 'xx_insurance_percentage':0.0,
+                'xx_insurance_percentages':0.0,
                 'xx_insurance_cost':0.0,
+                'xx_insurance_costs':0.0,
                 'amount_total': 0.0,
             }
             val = val1 = val2= 0.0
             
             cur = order.pricelist_id.currency_id
             res[order.id]['xx_insurance_percentage'] = cur_obj.round(cr,uid,cur,order.xx_insurance_method.xx_insurance_percentage)
+           
+           
+            
+            
             for line in order.order_line:
                 val1 += line.price_subtotal
                 val += self._amount_line_tax(cr, uid, line, context=context)
-                val2+=( res[order.id]['amount_untaxed'] + res[order.id]['amount_tax']) * ( res[order.id]['xx_insurance_percentage']/100)
+                val2 +=( res[order.id]['amount_untaxed'] ) * ( res[order.id]['xx_insurance_percentage']/100) + res[order.id]['amount_tax']
             res[order.id]['amount_tax'] = cur_obj.round(cr, uid, cur, val)
             res[order.id]['amount_untaxed'] = cur_obj.round(cr, uid, cur, val1)
+            order.xx_insurance_percentages=order.xx_insurance_method.xx_insurance_percentage
+            order.xx_insurance_costs=res[order.id]['amount_untaxed']  * ( res[order.id]['xx_insurance_percentage']/100)
+         
+            res[order.id]['amount_total'] =res[order.id]['amount_tax']+res[order.id]['amount_untaxed']  * (1+ res[order.id]['xx_insurance_percentage']/100) 
+           
             
-            res[order.id]['amount_total'] =res[order.id]['amount_tax']+res[order.id]['amount_untaxed']  * (1+ res[order.id]['xx_insurance_percentage']/100)
             return res
     def _prepare_invoice(self, cr, uid, order, lines, context=None):
         """Prepare the dict of values to create the new invoice for a
@@ -90,6 +99,8 @@ class SaleOrder(osv.Model):
             'xx_insurance_percentage' : order.xx_insurance_method.xx_insurance_percentage,
             'xx_insurance_cost' : (order.amount_untaxed ) * ( order.xx_insurance_method.xx_insurance_percentage/100)
             
+      
+            
         }
 
         # Care for deprecated _inv_get() hook - FIXME: to be removed after 6.1
@@ -127,10 +138,31 @@ class SaleOrder(osv.Model):
                                              string='Payment method'),
         'xx_warranty_period': fields.many2one('xx.warranty.period',
                                               string='Warranty period'),
+        # 'xx_insurance_price': fields.many2one('xx.insurance.price',
+         #                                     string='Insurance Price')
+        
         'xx_insurance_method': fields.many2one('xx.insurance.method',
-                                              string='Insurance method')
+                                              string='Insurance method'),
+                'xx_insurance_percentages': fields.float(string='Percentage'),
+  'xx_insurance_costs' : fields.float(string='Insurance Cost'),
+                
+                
                 
     }
+     #insurancemethod toevoegen op sale 
+#class InsurancePrice(osv.Model):
+   # _name = 'xx.insurance.price'
+  
+
+   # _columns = {
+     
+   #     'xx_insurance_percentages': fields.float(string='Percentage'),
+   #     'xx_insurance_cost' : fields.float(string='Insurance Cost'),
+    #    'xx_sale_ids': fields.one2many('sale.order', 'xx_insurance_price',
+    #                                   string='Sale orders')
+   # }   
+    
+    
     
    #insurancemethod toevoegen op sale 
 class InsuranceMethod(osv.Model):
@@ -144,7 +176,7 @@ class InsuranceMethod(osv.Model):
         'xx_sale_ids': fields.one2many('sale.order', 'xx_insurance_method',
                                         string='Sale orders')
     }    
-    
+ 
     
     
 class PaymentMethod(osv.Model):
