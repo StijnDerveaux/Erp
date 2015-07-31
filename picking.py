@@ -19,4 +19,5 @@ class StockPicking(osv.Model):
                                               string='Warranty period'),
         'xx_insurance_method': fields.many2one('xx.insurance.method',
                                               string='Insurance method')
+		#insurance methode toegevoegd voor welke insurance methode									  
     }

@@ -10,7 +10,7 @@ from openerp import workflow
 
 class SaleOrder(osv.Model):
     _inherit = 'sale.order'
-    
+    # de wrapper toegevoegd voor de berekening aan te passen en tonen van waardes op invoice en order
     def _get_order(self, cr, uid, ids, context=None):
         result = {}
         for line in self.pool.get('sale.order.line').browse(cr, uid, ids, context=context):
@@ -29,6 +29,7 @@ class SaleOrder(osv.Model):
             res[order.id] = {
                 'amount_untaxed': 0.0,
                 'amount_tax': 0.0,
+				#aangepast
                 'xx_insurance_percentage':0.0,
                 'xx_insurance_percentages':0.0,
                 'xx_insurance_cost':0.0,
@@ -38,6 +39,7 @@ class SaleOrder(osv.Model):
             val = val1 = val2= 0.0
             
             cur = order.pricelist_id.currency_id
+			#aangepast
             res[order.id]['xx_insurance_percentage'] = cur_obj.round(cr,uid,cur,order.xx_insurance_method.xx_insurance_percentage)
            
            
@@ -49,9 +51,10 @@ class SaleOrder(osv.Model):
                 val2 +=( res[order.id]['amount_untaxed'] ) * ( res[order.id]['xx_insurance_percentage']/100) + res[order.id]['amount_tax']
             res[order.id]['amount_tax'] = cur_obj.round(cr, uid, cur, val)
             res[order.id]['amount_untaxed'] = cur_obj.round(cr, uid, cur, val1)
+			#tonen van percentage en kost op sale order
             order.xx_insurance_percentages=order.xx_insurance_method.xx_insurance_percentage
             order.xx_insurance_costs=res[order.id]['amount_untaxed']  * ( res[order.id]['xx_insurance_percentage']/100)
-         
+         #het totaal bedrag van factuur laten aanpassen + verzekeringskost
             res[order.id]['amount_total'] =res[order.id]['amount_tax']+res[order.id]['amount_untaxed']  * (1+ res[order.id]['xx_insurance_percentage']/100) 
            
             
@@ -95,8 +98,11 @@ class SaleOrder(osv.Model):
             'company_id': order.company_id.id,
             'user_id': order.user_id and order.user_id.id or False,
             'section_id' : order.section_id.id,
+			#tonen van welke verzekerings methode op factuur
             'xx_insurance_method' : order.xx_insurance_method.id,
+			#tonen percentage verzekering op factuur
             'xx_insurance_percentage' : order.xx_insurance_method.xx_insurance_percentage,
+			#tonen verzekering kost op factuur
             'xx_insurance_cost' : (order.amount_untaxed ) * ( order.xx_insurance_method.xx_insurance_percentage/100)
             
       
@@ -140,10 +146,12 @@ class SaleOrder(osv.Model):
                                               string='Warranty period'),
         # 'xx_insurance_price': fields.many2one('xx.insurance.price',
          #                                     string='Insurance Price')
-        
+        #verzekeringsmethode
         'xx_insurance_method': fields.many2one('xx.insurance.method',
                                               string='Insurance method'),
+				#verzekeringspercentage							  
                 'xx_insurance_percentages': fields.float(string='Percentage'),
+				#verzekeringskost
   'xx_insurance_costs' : fields.float(string='Insurance Cost'),
                 
                 

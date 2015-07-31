@@ -9,6 +9,7 @@
                 <field name="origin" position="after">
                     <field name="xx_delivery_date"/>
                     <field name="xx_warranty_period"/>
+					<!-- toegevoegd zo dat de insurance methode kan bekeken worden -->
                     <field name="xx_insurance_method"/>
                 </field>
                 

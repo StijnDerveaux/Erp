@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 {
-    'name' : 'KH Leuven',
+    #naam aangepast naar mijn naam
+	'name' : 'KH Leuven',
     'version' : '0.1',
     'author' : 'Stijn Derveaux',
     'category' : 'KH Leuven',
@@ -13,7 +14,7 @@
         'view/warranty.xml',
         'view/website_sale_templates.xml',
         'view/account.xml',
-        
+        #account.xml toegevoegd
     ],
     'installable': True,
     'auto_install': False,

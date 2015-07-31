@@ -28,6 +28,7 @@ class StockMove(osv.Model):
         else:
             move = self.browse(cr, uid, move_ids, context=context)[0]
             values = {
+			#insurance methode toegevoegd
                 'xx_insurance_method': move.procurement_id.sale_line_id.order_id.xx_insurance_method.id,
                 'xx_delivery_date': move.procurement_id.sale_line_id.order_id.xx_delivery_date,
                 'xx_payment_method': move.procurement_id.sale_line_id.order_id.xx_payment_method.id,
