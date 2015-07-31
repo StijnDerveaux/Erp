@@ -18,10 +18,12 @@ class AccountInvoice(osv.Model):
     def _compute_amount(self):
         self.amount_untaxed = sum(line.price_subtotal for line in self.invoice_line),
         self.amount_tax = sum(line.amount for line in self.tax_line),
-        self.amount_total = (self.amount_untaxed + self.amount_tax) * (1 + self.xx_insurance_percentage /100)
+        self.amount_total = (self.amount_untaxed + self.amount_tax) * (1 + self.xx_insurance_percentage /100),
+     
 
     _columns = {
             'xx_insurance_method' : fields.many2one('xx.insurance.method',string='Insurance method'),
-            'xx_insurance_percentage' : fields.float(string="Insurance percentage")
+            'xx_insurance_percentage' : fields.float(string="Insurance percentage"),
+            'xx_insurance_cost' : fields.float(string="Insurance Cost")
               
     }

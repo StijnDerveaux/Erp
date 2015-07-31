@@ -2,7 +2,7 @@
 {
     'name' : 'KH Leuven',
     'version' : '0.1',
-    'author' : 'Landheer Stijn Derveaux',
+    'author' : 'Stijn Derveaux',
     'category' : 'KH Leuven',
     'description' : """
 """,

@@ -31,17 +31,21 @@ class SaleOrder(osv.Model):
                 'amount_tax': 0.0,
                
                 'xx_insurance_percentage':0.0,
+                'xx_insurance_cost':0.0,
                 'amount_total': 0.0,
             }
-            val = val1 = 0.0
+            val = val1 = val2= 0.0
+            
             cur = order.pricelist_id.currency_id
             res[order.id]['xx_insurance_percentage'] = cur_obj.round(cr,uid,cur,order.xx_insurance_method.xx_insurance_percentage)
             for line in order.order_line:
                 val1 += line.price_subtotal
                 val += self._amount_line_tax(cr, uid, line, context=context)
+                val2+=( res[order.id]['amount_untaxed'] + res[order.id]['amount_tax']) * ( res[order.id]['xx_insurance_percentage']/100)
             res[order.id]['amount_tax'] = cur_obj.round(cr, uid, cur, val)
             res[order.id]['amount_untaxed'] = cur_obj.round(cr, uid, cur, val1)
-            res[order.id]['amount_total'] =( res[order.id]['amount_untaxed'] + res[order.id]['amount_tax']) * (1+ res[order.id]['xx_insurance_percentage']/100)
+            
+            res[order.id]['amount_total'] =res[order.id]['amount_tax']+res[order.id]['amount_untaxed']  * (1+ res[order.id]['xx_insurance_percentage']/100)
             return res
     def _prepare_invoice(self, cr, uid, order, lines, context=None):
         """Prepare the dict of values to create the new invoice for a
@@ -83,7 +87,9 @@ class SaleOrder(osv.Model):
             'user_id': order.user_id and order.user_id.id or False,
             'section_id' : order.section_id.id,
             'xx_insurance_method' : order.xx_insurance_method.id,
-            'xx_insurance_percentage' : order.xx_insurance_method.xx_insurance_percentage
+            'xx_insurance_percentage' : order.xx_insurance_method.xx_insurance_percentage,
+            'xx_insurance_cost' : (order.amount_untaxed ) * ( order.xx_insurance_method.xx_insurance_percentage/100)
+            
         }
 
         # Care for deprecated _inv_get() hook - FIXME: to be removed after 6.1
