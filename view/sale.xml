@@ -17,7 +17,7 @@
                  <!--
                    <field name="xx_insurance_price"/>
                -->
-                    <field  name="xx_insurance_percentages" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
+                    <field  name="xx_insurance_percentages" widget="progressbar" options="{'currency_field': 'currency_id'}" readonly="1"/>
                     <field name="xx_insurance_costs" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
              
                 </field>
